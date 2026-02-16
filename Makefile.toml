@@ -1,0 +1,3 @@
+[tasks.start-db]
+command = "docker"
+args = ["compose", "up", "-d"]
