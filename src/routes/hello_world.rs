@@ -1,6 +1,6 @@
 use axum::{Router, routing::get};
 
-use crate::{AppState, handlers::do_hehe};
+use crate::{app::AppState, handler::do_hehe};
 
 pub fn hehe_router() -> Router<AppState> {
     Router::new()
