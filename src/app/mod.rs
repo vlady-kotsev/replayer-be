@@ -1,8 +1,10 @@
 use crate::{
-    config::load_config, db::create_connection_pool, middleware::SignatureRecoverLayer,
-    routes::hehe_router,
+    config::load_config,
+    db::create_connection_pool,
+    errors::AppResult,
+    routes::{game_router, key_router},
+    service::{GameService, SignerService},
 };
-use anyhow::{Result, anyhow};
 use axum::Router;
 use solana_keypair::Keypair;
 use std::sync::Arc;
@@ -16,35 +18,38 @@ pub use app_state::AppState;
 pub struct App;
 
 impl App {
-    pub async fn run() -> Result<App> {
-        tracing_subscriber::fmt::try_init()
-            .map_err(|_| anyhow!("Failed to start tracing subscriber"))?;
+    pub async fn run() -> AppResult<App> {
+        tracing_subscriber::fmt::try_init()?;
 
-        let app_config = Arc::new(load_config().await?);
-        let pool = create_connection_pool().await?;
+        let app_config = load_config().await?;
+        let pool = create_connection_pool(&app_config.app.database_url).await?;
         info!("Conencted to db");
 
         let keypair = Keypair::new_from_array(app_config.solana.keypair_bytes[..32].try_into()?);
 
+        let game_service = GameService::new(pool);
+
+        let signer_service = SignerService::new(Arc::new(keypair), 2);
+
         let app_state = AppState {
-            db: pool,
-            config: app_config.clone(),
-            app_keypair: Arc::new(keypair),
+            signer_service,
+            game_service,
         };
 
         let app = Router::new()
-            .merge(hehe_router())
+            .merge(game_router())
+            .merge(key_router())
             .layer(
-                ServiceBuilder::new()
-                    .layer(TraceLayer::new_for_http())
-                    // .layer(SignatureRecoverLayer::new(app_state.clone())),
+                ServiceBuilder::new().layer(TraceLayer::new_for_http()), //.layer(RetryLayer::new(policy)),
             )
             .with_state(app_state);
-        let app_config = app_config.clone();
+
         let listener =
             TcpListener::bind(format!("{}:{}", app_config.app.host, app_config.app.port)).await?;
         info!(port =%app_config.app.port, "Server started... ");
+
         axum::serve(listener, app).await?;
+
         Ok(App)
     }
 }

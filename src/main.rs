@@ -1,8 +1,7 @@
-use anyhow::Result;
-use replayer_be::App;
+use replayer_be::{App, AppResult};
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> AppResult<()> {
     App::run().await?;
 
     Ok(())

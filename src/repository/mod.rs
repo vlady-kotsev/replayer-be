@@ -1,5 +1,5 @@
 mod dto;
-mod game;
+mod game_repository;
 
 pub use dto::*;
-pub use game::*;
+pub use game_repository::*;

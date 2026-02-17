@@ -6,10 +6,10 @@ pub struct FetchGameDto {
     pub name: String,
     pub developer: String,
     pub encryption_key: String,
+    pub nonce: String,
 }
 
 pub struct CreateGameDto {
     pub name: String,
     pub developer: String,
-    pub encryption_key: String,
 }

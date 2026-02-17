@@ -1,6 +1,5 @@
-use anyhow::Result;
-use base64::{Engine, engine::general_purpose::STANDARD};
-use serde::{Deserialize, Deserializer, de};
+use crate::{errors::AppResult, util::deserialize_keypair};
+use serde::Deserialize;
 use tokio::fs::read_to_string;
 
 #[derive(Deserialize)]
@@ -11,7 +10,7 @@ pub struct Config {
 
 #[derive(Deserialize)]
 pub struct SolanaConfig {
-    #[serde(deserialize_with = "deserialize_base64")]
+    #[serde(deserialize_with = "deserialize_keypair")]
     pub keypair_bytes: [u8; 64],
 }
 
@@ -22,20 +21,11 @@ pub struct AppConfig {
     pub database_url: String,
 }
 
-pub async fn load_config() -> Result<Config> {
-    let content = read_to_string("config/config.toml").await?;
+pub async fn load_config() -> AppResult<Config> {
+    let config_file = std::env::var("CONFIG_DIR").unwrap_or(String::from("config/config.toml"));
+
+    let content = read_to_string(config_file).await?;
     let config = toml::from_str::<Config>(&content)?;
 
     Ok(config)
-}
-
-fn deserialize_base64<'de, D>(deserializer: D) -> Result<[u8; 64], D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let s: String = Deserialize::deserialize(deserializer)?;
-    let bytes = STANDARD.decode(s).map_err(de::Error::custom)?;
-    bytes
-        .try_into()
-        .map_err(|_| de::Error::custom("expected 64 bytes"))
 }

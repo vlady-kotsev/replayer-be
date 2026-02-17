@@ -1,3 +1,3 @@
-mod game;
+mod game_model;
 
-pub use game::*;
+pub use game_model::*;

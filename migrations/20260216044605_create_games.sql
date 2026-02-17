@@ -4,5 +4,7 @@ CREATE TABLE games (
     name VARCHAR(255) NOT NULL,
     developer VARCHAR(255) NOT NULL,
     encryption_key TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
+    nonce Text NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT unique_user_game UNIQUE (name, developer)
 );
