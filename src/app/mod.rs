@@ -37,7 +37,7 @@ impl App {
             .layer(
                 ServiceBuilder::new()
                     .layer(TraceLayer::new_for_http())
-                    .layer(SignatureRecoverLayer::new(app_state.clone())),
+                    // .layer(SignatureRecoverLayer::new(app_state.clone())),
             )
             .with_state(app_state);
         let app_config = app_config.clone();

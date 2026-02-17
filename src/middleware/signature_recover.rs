@@ -78,7 +78,6 @@ where
         let state = self.state.clone();
 
         Box::pin(async move {
-            // let body = req.body();
             let (parts, body) = req.into_parts();
 
             let bytes = match to_bytes(body, usize::MAX).await {
@@ -90,8 +89,6 @@ where
                         .unwrap());
                 }
             };
-            let msg = "hehe".as_bytes();
-            let signa= state.app_keypair.sign_message(msg);
 
             let parsed_body: SignatureRecoverBody = match serde_json::from_slice(&bytes) {
                 Ok(b) => b,
@@ -104,17 +101,15 @@ where
             };
 
             info!("{}", parsed_body.signature.to_string());
-            let message_bytes = parsed_body.message.as_bytes();
 
-            let is_verified = signa.verify(
+            let is_verified = parsed_body.signature.verify(
                 state.app_keypair.pubkey().to_bytes().as_ref(),
-                msg
+                parsed_body.message.as_ref(),
             );
 
             info!("Verifier {}", is_verified);
             let req = Request::from_parts(parts, Body::from(bytes));
             let response = inner.call(req).await?;
-            println!("Response complete");
             Ok(response)
         })
     }
