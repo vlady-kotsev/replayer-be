@@ -1,4 +1,4 @@
-use crate::{errors::AppError, middleware::signature_recover::SignatureRecoverBody};
+use crate::{errors::AppError, middleware::recover_signature::RecoverSignatureBody};
 use axum::{
     body::{Body, to_bytes},
     http::{self, Request},
@@ -12,11 +12,11 @@ use std::{
 use tower::Service;
 
 #[derive(Clone)]
-pub struct SignatureRecoverService<S> {
+pub struct RecoverSignatureService<S> {
     pub inner: S,
 }
 
-impl<S> Service<http::Request<Body>> for SignatureRecoverService<S>
+impl<S> Service<http::Request<Body>> for RecoverSignatureService<S>
 where
     S: Service<http::Request<Body>, Response = Response<Body>> + Clone + Send + 'static,
     S::Future: Send,
@@ -42,7 +42,7 @@ where
                 }
             };
 
-            let parsed_body: SignatureRecoverBody = match serde_json::from_slice(&bytes) {
+            let parsed_body: RecoverSignatureBody = match serde_json::from_slice(&bytes) {
                 Ok(pb) => pb,
                 Err(e) => {
                     return Ok(AppError::bad_request(e.to_string()).into_response());

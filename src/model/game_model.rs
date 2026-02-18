@@ -16,11 +16,11 @@ pub struct CreateGameModel {
     pub developer: Address,
 }
 
-impl Into<CreateGameDto> for CreateGameModel {
-    fn into(self) -> CreateGameDto {
+impl From<CreateGameModel> for CreateGameDto {
+    fn from(model: CreateGameModel) -> Self {
         CreateGameDto {
-            name: self.name,
-            developer: self.developer.to_string(),
+            name: model.name,
+            developer: model.developer.to_string(),
         }
     }
 }
@@ -38,16 +38,20 @@ impl TryFrom<FetchGameDto> for GameModel {
 
     fn try_from(dto: FetchGameDto) -> Result<Self, Self::Error> {
         let nonce_bytes: [u8; 12] = STANDARD
-            .decode(dto.nonce)?
+            .decode(dto.nonce)
+            .map_err(|e| AppError::internal(e.to_string()))?
             .try_into()
             .map_err(|_| AppError::internal("Can't deserialize nonce"))?;
+
         let nonce = GenericArray::from_slice(&nonce_bytes).to_owned();
 
         let encryption_key_bytes: [u8; 32] = STANDARD
-            .decode(dto.encryption_key)?
+            .decode(dto.encryption_key)
+            .map_err(|e| AppError::internal(e.to_string()))?
             .try_into()
             .map_err(|_| AppError::internal("Can't deserialize encryption key"))?;
-        let encryption_key: Key<Aes256Gcm> = encryption_key_bytes.try_into()?;
+
+        let encryption_key: Key<Aes256Gcm> = encryption_key_bytes.into();
 
         Ok(GameModel {
             id: dto.id,

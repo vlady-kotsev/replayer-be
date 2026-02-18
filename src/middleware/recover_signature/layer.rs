@@ -1,11 +1,11 @@
-use crate::middleware::signature_recover::SignatureRecoverService;
+use crate::middleware::recover_signature::RecoverSignatureService;
 use crate::util::{deserialize_address, deserialize_signature};
 use serde::Deserialize;
 use solana_keypair::{Address, Signature};
 use tower::Layer;
 
 #[derive(Deserialize)]
-pub struct SignatureRecoverBody {
+pub struct RecoverSignatureBody {
     #[serde(deserialize_with = "deserialize_signature")]
     pub signature: Signature,
     pub message: String,
@@ -14,12 +14,12 @@ pub struct SignatureRecoverBody {
 }
 
 #[derive(Clone)]
-pub struct SignatureRecoverLayer;
+pub struct RecoverSignatureLayer;
 
-impl<S> Layer<S> for SignatureRecoverLayer {
-    type Service = SignatureRecoverService<S>;
+impl<S> Layer<S> for RecoverSignatureLayer {
+    type Service = RecoverSignatureService<S>;
 
     fn layer(&self, inner: S) -> Self::Service {
-        SignatureRecoverService { inner }
+        RecoverSignatureService { inner }
     }
 }

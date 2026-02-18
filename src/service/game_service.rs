@@ -19,8 +19,7 @@ impl GameService {
         let game_dtos = GameRepository::get_all(&self.db).await?;
         let game_models = game_dtos
             .into_iter()
-            .map(|dto| dto.try_into())
-            .flat_map(|m| m)
+            .flat_map(|dto| dto.try_into())
             .collect::<Vec<GameModel>>();
         Ok(game_models)
     }

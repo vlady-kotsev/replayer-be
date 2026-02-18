@@ -1,6 +1,7 @@
-use crate::{model::CreateGameModel, util::deserialize_address};
+use crate::model::CreateGameModel;
 use serde::Deserialize;
 use solana_keypair::Address;
+use crate::util::deserialize_address;
 
 #[derive(Deserialize)]
 pub struct CreateGameRequest {
@@ -9,11 +10,11 @@ pub struct CreateGameRequest {
     pub developer: Address,
 }
 
-impl Into<CreateGameModel> for CreateGameRequest {
-    fn into(self) -> CreateGameModel {
+impl From<CreateGameRequest> for CreateGameModel {
+    fn from(req: CreateGameRequest) -> Self {
         CreateGameModel {
-            name: self.name,
-            developer: self.developer,
+            name: req.name,
+            developer: req.developer,
         }
     }
 }

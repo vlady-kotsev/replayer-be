@@ -5,3 +5,5 @@ database_url = "postgres://postgres:postgres@localhost/replayer"
 
 [solana]
 keypair_bytes = ""
+rpc_url = "https://api.devnet.solana.com"
+program_id = "3L4ZDN7REkTk97ybn5FS4NUBMmcbQQQjQbKH6kET595c"

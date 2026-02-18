@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Display};
+use std::fmt::Debug;
 
 use axum::{
     http::StatusCode,
@@ -12,15 +12,6 @@ pub struct AppError {
 }
 
 pub type AppResult<T> = Result<T, AppError>;
-
-impl<E: Display> From<E> for AppError {
-    fn from(value: E) -> Self {
-        AppError {
-            message: value.to_string(),
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-        }
-    }
-}
 
 impl AppError {
     pub fn internal(msg: impl Into<String>) -> Self {
@@ -40,6 +31,13 @@ impl AppError {
     pub fn forbidden(msg: impl Into<String>) -> Self {
         AppError {
             status: StatusCode::FORBIDDEN,
+            message: msg.into(),
+        }
+    }
+
+    pub fn not_found(msg: impl Into<String>) -> Self {
+        AppError {
+            status: StatusCode::NOT_FOUND,
             message: msg.into(),
         }
     }
