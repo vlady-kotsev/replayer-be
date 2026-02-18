@@ -62,7 +62,7 @@ where
                 &[
                     GAME_KEY_ASSET_SEED,
                     parsed_body.developer.as_ref(),
-                    parsed_body.game_name.as_bytes(),
+                    parsed_body.name.as_bytes(),
                     parsed_body.player.as_ref(),
                 ],
                 &program_id,

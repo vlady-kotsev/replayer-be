@@ -12,7 +12,7 @@ use crate::{
 
 pub fn key_router(client: Arc<SolanaClient>, program_id: Address) -> Router<AppServices> {
     Router::new()
-        .route("/key", post(get_game_key))
+        .route("/keys", post(get_game_key))
         .route_layer(ValidateNftLayer::new(client, program_id))
         .route_layer(RecoverSignatureLayer)
 }

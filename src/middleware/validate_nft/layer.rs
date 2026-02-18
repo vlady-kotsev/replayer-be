@@ -11,7 +11,7 @@ pub struct ValidateNftBody {
     pub developer: Address,
     #[serde(deserialize_with = "deserialize_address")]
     pub player: Address,
-    pub game_name: String,
+    pub name: String,
 }
 
 #[derive(Clone)]
