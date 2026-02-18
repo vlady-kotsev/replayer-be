@@ -1,9 +1,9 @@
+use crate::util::deserialize_address;
 use crate::{client::SolanaClient, middleware::ValidateNftService};
 use serde::Deserialize;
 use solana_keypair::Address;
 use std::sync::Arc;
 use tower::Layer;
-use crate::util::deserialize_address;
 
 #[derive(Deserialize)]
 pub struct ValidateNftBody {

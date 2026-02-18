@@ -1,6 +1,6 @@
 use crate::{
     errors::{AppError, AppResult},
-    util::{deserialize_keypair,deserialize_address},
+    util::{deserialize_address, deserialize_keypair},
 };
 use serde::Deserialize;
 use solana_keypair::Address;

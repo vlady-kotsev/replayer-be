@@ -67,9 +67,8 @@ where
                 ],
                 &program_id,
             );
-            let result = match client.check_account_exists(&game_nft_address).await {
-                Some(r) => r,
-                None => return Ok(AppError::not_found("NFT PDA not found").into_response()),
+            let Some(result) = client.check_account_exists(&game_nft_address).await else {
+                return Ok(AppError::not_found("NFT PDA not found").into_response());
             };
 
             let nft_asset = match BaseAssetV1::from_bytes(&result) {

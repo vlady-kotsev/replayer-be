@@ -4,12 +4,12 @@ use axum::{
 };
 
 use crate::{
-    app::AppState,
+    app::AppServices,
     handler::{create_game, get_all_games},
     middleware::RecoverSignatureLayer,
 };
 
-pub fn game_router() -> Router<AppState> {
+pub fn game_router() -> Router<AppServices> {
     Router::new()
         .route("/games", post(create_game))
         .route_layer(RecoverSignatureLayer)

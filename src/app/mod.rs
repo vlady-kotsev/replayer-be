@@ -4,7 +4,7 @@ use crate::{
     db::create_connection_pool,
     errors::{AppError, AppResult},
     routes::{game_router, key_router},
-    service::{GameService, SignerService},
+    service::{GameService, KeyService, SignerService},
 };
 use axum::Router;
 use solana_keypair::Keypair;
@@ -15,10 +15,10 @@ use tower_http::trace::TraceLayer;
 use tracing::info;
 mod app_state;
 
-pub use app_state::AppState;
+pub use app_state::AppServices;
 pub struct App {
     pub config: Config,
-    pub state: AppState,
+    pub services: AppServices,
 }
 
 impl App {
@@ -35,18 +35,17 @@ impl App {
                 .map_err(|_| AppError::internal("Error loading keypair"))?,
         );
 
-        let game_service = GameService::new(pool);
+        let game = GameService::new(pool.clone());
 
-        let signer_service = SignerService::new(Arc::new(keypair), 2);
+        let signer = SignerService::new(Arc::new(keypair), 2);
 
-        let app_state = AppState {
-            signer_service,
-            game_service,
-        };
+        let key = KeyService::new(pool);
+
+        let services = AppServices { game, key, signer };
 
         Ok(App {
             config: app_config,
-            state: app_state,
+            services,
         })
     }
 
@@ -61,7 +60,7 @@ impl App {
             .layer(
                 ServiceBuilder::new().layer(TraceLayer::new_for_http()), //.layer(RetryLayer::new(policy)),
             )
-            .with_state(app.state);
+            .with_state(app.services);
 
         let listener =
             TcpListener::bind(format!("{}:{}", app.config.app.host, app.config.app.port))

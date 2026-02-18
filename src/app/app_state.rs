@@ -1,7 +1,8 @@
-use crate::service::{GameService, SignerService};
+use crate::service::{GameService, KeyService, SignerService};
 
 #[derive(Clone)]
-pub struct AppState {
-    pub game_service: GameService,
-    pub signer_service: SignerService,
+pub struct AppServices {
+    pub game: GameService,
+    pub key: KeyService,
+    pub signer: SignerService,
 }

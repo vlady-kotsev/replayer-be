@@ -1,38 +1,40 @@
 use std::sync::Arc;
 
 use chrono::{Duration, Utc};
-use solana_keypair::{Address, Keypair, Signature, Signer};
-use tracing::info;
+use solana_keypair::{Keypair, Signer};
+
+use crate::model::{GetKeyModel, SignatureModel};
 
 #[derive(Clone)]
 pub struct SignerService {
     pub authorizer: Arc<Keypair>,
-    pub valid_for: i64, // hours
+    pub valid_period: i64, // hours
 }
 
 impl SignerService {
-    pub fn new(authorizer: Arc<Keypair>, valid_for: i64) -> SignerService {
+    pub fn new(authorizer: Arc<Keypair>, valid_period: i64) -> SignerService {
         Self {
             authorizer,
-            valid_for,
+            valid_period,
         }
     }
 
-    pub fn sign_message(&self, game_name: String, game_developer: Address) -> (Signature, i64) {
-        let valid_period = (Utc::now() + Duration::hours(self.valid_for)).timestamp();
+    pub fn sign_message(&self, model: &GetKeyModel) -> SignatureModel {
+        let valid_period = (Utc::now() + Duration::hours(self.valid_period)).timestamp();
 
         let payload = [
             &valid_period.to_le_bytes(),
-            game_name.as_bytes(),
-            game_developer.as_array(),
+            model.name.as_bytes(),
+            model.developer.as_array(),
+            model.player.as_array(),
         ]
         .concat();
 
         let signature = self.authorizer.sign_message(&payload);
-        info!(
-            "{}",
-            self.authorizer.sign_message("test".as_bytes()).to_string()
-        );
-        (signature, valid_period)
+
+        SignatureModel {
+            signature,
+            valid_period,
+        }
     }
 }

@@ -1,0 +1,1 @@
+SELECT * from games where name = $1 AND developer = $2; 

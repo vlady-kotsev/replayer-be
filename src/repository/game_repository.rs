@@ -1,6 +1,6 @@
 use crate::{
     errors::{AppError, AppResult},
-    repository::{CreateGameDto, FetchGameDto},
+    repository::{CreateGameDto, FetchGameDto, GetKeyDto},
 };
 use aes_gcm::{
     Aes256Gcm,
@@ -42,5 +42,19 @@ impl GameRepository {
             .map_err(|e| AppError::bad_request(e.to_string()))?;
 
         Ok(())
+    }
+
+    pub async fn get_game_key(
+        db: &Pool<Postgres>,
+        dto: GetKeyDto,
+    ) -> AppResult<Option<FetchGameDto>> {
+        let sql = include_str!("sql/get_game_key.sql");
+        let game_key = sqlx::query_as::<_, FetchGameDto>(sql)
+            .bind(dto.game_name)
+            .bind(dto.developer)
+            .fetch_optional(db) // returns None if no match
+            .await
+            .map_err(|e| AppError::internal(e.to_string()))?;
+        Ok(game_key)
     }
 }
