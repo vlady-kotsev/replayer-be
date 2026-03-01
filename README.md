@@ -160,3 +160,10 @@ cargo run
 ```
 
 The server starts on the host and port defined in `config.toml`.
+
+## Related Repositories
+
+This is part of the **Replayer** project. Check out the other repos:
+
+- [replayer-fe](https://github.com/vlady-kotsev/replayer-fe) — Frontend
+- [replayer-program](https://github.com/vlady-kotsev/replayer-program) — Solana program
