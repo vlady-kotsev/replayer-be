@@ -1,4 +1,6 @@
 # Replayer Backend
+<img width="200px" src="https://github.com/user-attachments/assets/aee18132-9a95-43ef-9ac6-2103816e4d01" />
+<hr/>
 
 A Rust backend service for game encryption key management, integrated with the Solana blockchain for signature verification and NFT-based access control.
 
