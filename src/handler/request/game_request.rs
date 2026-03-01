@@ -1,5 +1,5 @@
 use crate::model::CreateGameModel;
-use crate::util::deserialize_address;
+use crate::utils::deserialize_address;
 use serde::Deserialize;
 use solana_keypair::Address;
 

@@ -2,7 +2,7 @@ use sqlx::{Pool, Postgres};
 
 use crate::{
     errors::AppResult,
-    model::{CreateGameModel, GameModel},
+    model::{CreateGameModel, GameModel, KeyModel},
     repository::{CreateGameDto, GameRepository},
 };
 
@@ -24,7 +24,7 @@ impl GameService {
         Ok(game_models)
     }
 
-    pub async fn create_game(&self, model: CreateGameModel) -> AppResult<()> {
+    pub async fn create_game(&self, model: CreateGameModel) -> AppResult<KeyModel> {
         let create_game_dto: CreateGameDto = model.into();
 
         GameRepository::create(&self.db, create_game_dto).await

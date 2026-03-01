@@ -1,5 +1,5 @@
 use crate::middleware::recover_signature::RecoverSignatureService;
-use crate::util::{deserialize_address, deserialize_signature};
+use crate::utils::{deserialize_address, deserialize_signature};
 use serde::Deserialize;
 use solana_keypair::{Address, Signature};
 use tower::Layer;

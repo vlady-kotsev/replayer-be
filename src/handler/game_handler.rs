@@ -3,7 +3,7 @@ use axum::{Json, extract::State};
 use crate::{
     AppResult,
     app::AppServices,
-    handler::{CreateGameRequest, GameResponse},
+    handler::{CreateGameRequest, CreateGameResponse, GameResponse},
     model::CreateGameModel,
 };
 
@@ -20,7 +20,8 @@ pub async fn get_all_games(
 pub async fn create_game(
     State(services): State<AppServices>,
     Json(game_request): Json<CreateGameRequest>,
-) -> AppResult<()> {
+) -> AppResult<Json<CreateGameResponse>> {
     let create_game_model: CreateGameModel = game_request.into();
-    services.game.create_game(create_game_model).await
+    let key_model = services.game.create_game(create_game_model).await?;
+    Ok(Json(key_model.into()))
 }

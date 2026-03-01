@@ -9,7 +9,7 @@ mod model;
 mod repository;
 mod routes;
 mod service;
-mod util;
+mod utils;
 
 pub use app::App;
 pub use errors::AppResult;

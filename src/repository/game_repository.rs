@@ -1,5 +1,6 @@
 use crate::{
     errors::{AppError, AppResult},
+    model::KeyModel,
     repository::{CreateGameDto, FetchGameDto, GetKeyDto},
 };
 use aes_gcm::{
@@ -21,16 +22,14 @@ impl GameRepository {
         Ok(games)
     }
 
-    pub async fn create(db: &Pool<Postgres>, dto: CreateGameDto) -> AppResult<()> {
+    pub async fn create(db: &Pool<Postgres>, dto: CreateGameDto) -> AppResult<KeyModel> {
         let sql = include_str!("sql/create_game.sql");
 
         let key = Aes256Gcm::generate_key(OsRng);
-        let key: [u8; 32] = key.into();
-        let base64_encryption_key = STANDARD.encode(key);
-
         let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
-        let nonce: [u8; 12] = nonce.into();
-        let base64_nonce = STANDARD.encode(nonce);
+
+        let base64_encryption_key = STANDARD.encode(key.as_slice());
+        let base64_nonce = STANDARD.encode(nonce.as_slice());
 
         sqlx::query(sql)
             .bind(dto.name)
@@ -41,7 +40,10 @@ impl GameRepository {
             .await
             .map_err(|e| AppError::bad_request(e.to_string()))?;
 
-        Ok(())
+        Ok(KeyModel {
+            encryption_key: key,
+            nonce,
+        })
     }
 
     pub async fn get_game_key(

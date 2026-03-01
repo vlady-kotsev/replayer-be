@@ -1,4 +1,4 @@
-use crate::util::deserialize_address;
+use crate::utils::deserialize_address;
 use crate::{client::SolanaClient, middleware::ValidateNftService};
 use serde::Deserialize;
 use solana_keypair::Address;
