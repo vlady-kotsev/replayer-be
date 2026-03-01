@@ -49,9 +49,14 @@ where
                 }
             };
 
+            let msg = format!(
+                "Replayer: game '{}' (valid until: {})",
+                parsed_body.name, parsed_body.valid_period
+            );
+
             let is_verified = parsed_body
                 .signature
-                .verify(parsed_body.developer.as_ref(), parsed_body.message.as_ref());
+                .verify(parsed_body.player.as_ref(), msg.as_bytes());
 
             if !is_verified {
                 return Ok(AppError::forbidden("Invalid signer").into_response());

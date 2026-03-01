@@ -30,10 +30,15 @@ impl TryFrom<FetchGameDto> for GameModel {
     type Error = AppError;
 
     fn try_from(dto: FetchGameDto) -> Result<Self, Self::Error> {
+        let developer = dto
+            .developer
+            .parse()
+            .map_err(|_| AppError::internal("Failed to parse developer address"))?;
+
         Ok(GameModel {
             id: dto.id,
             name: dto.name,
-            developer: Address::from_str_const(&dto.developer),
+            developer,
         })
     }
 }

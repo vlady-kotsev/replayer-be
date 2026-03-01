@@ -8,9 +8,12 @@ use tower::Layer;
 pub struct RecoverSignatureBody {
     #[serde(deserialize_with = "deserialize_signature")]
     pub signature: Signature,
-    pub message: String,
+    pub name: String,
+    pub valid_period: i64,
     #[serde(deserialize_with = "deserialize_address")]
     pub developer: Address,
+    #[serde(deserialize_with = "deserialize_address")]
+    pub player: Address,
 }
 
 #[derive(Clone)]

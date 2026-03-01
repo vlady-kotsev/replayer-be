@@ -13,5 +13,5 @@ pub fn game_router() -> Router<AppServices> {
     Router::new()
         .route("/games", post(create_game))
         .route_layer(RecoverSignatureLayer)
-        .route("/games", get(get_all_games)) //.post(handlers::create_user))
+        .route("/games", get(get_all_games)) 
 }

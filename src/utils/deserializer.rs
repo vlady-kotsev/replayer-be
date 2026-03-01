@@ -19,7 +19,9 @@ where
     D: Deserializer<'de>,
 {
     let s: String = Deserialize::deserialize(deserializer)?;
-    let address: Address = Address::from_str_const(&s);
+    let address: Address = s
+        .parse()
+        .map_err(|_| de::Error::custom("Failed to deserialize address"))?;
 
     Ok(address)
 }
